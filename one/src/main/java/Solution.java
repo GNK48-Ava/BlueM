@@ -1,6 +1,8 @@
 import Bean.Lost;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 class Solution {
 
@@ -10,9 +12,8 @@ class Solution {
      * @param lostArray 待排序的失物数组
      */
     public void sortLost(Lost[] lostArray) {
-        int[] dateArray = getDateArray(lostArray);
-        new Util()._qSort(lostArray, dateArray, 0, lostArray.length - 1);
-
+        Integer[] dateArray = getDateArray(lostArray);
+        _qSort(lostArray, dateArray, 0, lostArray.length - 1);
     }
 
     /**
@@ -26,60 +27,64 @@ class Solution {
         return null;
     }
 
-    public int[] getDateArray(Lost[] lostArray) {
-        int[] dateArray = new int[lostArray.length];
-        int year;
-        int month;
-        int date;
+    public Integer[] getDateArray(Lost[] lostArray) {
+        Integer[] dateArray = new Integer[lostArray.length];
         int i = 0;
         for (Lost lost : lostArray) {
-            Calendar _date = lost.getDate();
-            year = _date.get(Calendar.YEAR);
-            month = _date.get(Calendar.MONTH);
-            date = _date.get(Calendar.DATE);
-            StringBuffer stringBuffer = new StringBuffer().append(year).append(month).append(date);
-            dateArray[i] = Integer.parseInt(stringBuffer.toString());
+            Date _date = lost.getDate().getTime();
+            Integer date = Integer.valueOf(String.valueOf(_date.getTime()).substring(0, 10));
+            dateArray[i] = date;
+            i++;
         }
         return dateArray;
     }
 
 
-    class Util {
-        int getPivot(int[] array, int left, int right) {
-            int center = (left + right) / 2;
-            if (array[left] > array[center]) {
-                int temp = array[left];
-                array[left] = array[center];
-                array[center] = temp;
-            }
-            if (array[center] > array[right]) {
-                int temp = array[center];
-                array[center] = array[right];
-                array[right] = temp;
-            }
-            if (array[left] > array[right]) {
-                int temp = array[left];
-                array[left] = array[right];
-                array[right] = temp;
-            }
-            int temp = array[center];
-            array[center] = array[right - 1];
-            array[right - 1] = temp;
-
-
-            return array[right - 1];
+    private int getPivot(Lost[] array, Integer[] dateArray, int left, int right) {
+        int center = (left + right) / 2;
+        if (dateArray[left] > dateArray[center]) {
+            int temp = dateArray[left];
+            dateArray[left] = dateArray[center];
+            dateArray[center] = temp;
+            Lost tempLost = array[left];
+            array[left] = array[center];
+            array[center] = tempLost;
         }
+        if (dateArray[left] > dateArray[right]) {
+            int temp = dateArray[left];
+            dateArray[left] = dateArray[right];
+            dateArray[right] = temp;
+            Lost tempLost = array[left];
+            array[left] = array[right];
+            array[right] = tempLost;
+        }
+        if (dateArray[center] > dateArray[right]) {
+            int temp = dateArray[center];
+            dateArray[center] = dateArray[right];
+            dateArray[right] = temp;
+            Lost tempLost = array[center];
+            array[center] = array[right];
+            array[right] = tempLost;
+        }
+        int temp = dateArray[center];
+        dateArray[center] = dateArray[right - 1];
+        dateArray[right - 1] = temp;
+        Lost tempLost = array[center];
+        array[center] = array[right - 1];
+        array[right - 1] = tempLost;
 
-        void _qSort(Lost[] array, int[] dateArray, int left, int right) {
-            int pivot = getPivot(dateArray, left, right);
+        return dateArray[right - 1];
+    }
+
+    private void _qSort(Lost[] array, Integer[] dateArray, int left, int right) {
+        if (left < right) {
+            int pivot = getPivot(array, dateArray, left, right);
             int low = left;
             int high = right - 1;
             while (true) {
-                while (dateArray[low] < pivot && low < high) {
-                    low++;
+                while (low < high && dateArray[++low] < pivot) {
                 }
-                while (dateArray[high] > pivot && low < high) {
-                    high--;
+                while (low < high && dateArray[--high] > pivot) {
                 }
                 if (low < high) {
                     int tempDate = dateArray[low];
@@ -88,19 +93,21 @@ class Solution {
                     Lost tempLost = array[low];
                     array[low] = array[high];
                     array[high] = tempLost;
-                } else break;
-
-
+                } else {
+                    break;
+                }
             }
-            for(int i=left;i<=right;i++){
-                Calendar date = array[i].getDate();
-                System.out.print(date.get(Calendar.YEAR) + " " + date.get(Calendar.MONTH) + "  " + date.get(Calendar.DATE)+" ");
-            }
+            int tempDate = dateArray[low];
+            dateArray[low] = dateArray[right - 1];
+            dateArray[right - 1] = tempDate;
+            Lost tempLost = array[low];
+            array[low] = array[right - 1];
+            array[right - 1] = tempLost;
             _qSort(array, dateArray, low + 1, right);
             _qSort(array, dateArray, left, low - 1);
         }
-
     }
+
 
 
 }
