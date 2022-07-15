@@ -1,8 +1,8 @@
 package Bean;
 
 public class CardLost extends Lost{
-    private String id;
-    private String college;
+    private String id;//学号
+    private String college;//学院
 
 
     public String getId() {
