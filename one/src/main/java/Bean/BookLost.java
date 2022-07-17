@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 public class BookLost extends Lost {
     private String press;//出版社
-
+    private String bookName;//图书名字
 
     public BookLost(Calendar calendar) {
         super(calendar);
